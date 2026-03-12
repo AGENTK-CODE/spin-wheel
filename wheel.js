@@ -28,26 +28,28 @@ const colors = [
 "#95A5A6"
 ];
 
-let startAngle = 0;
-let spinning = false;
-
 const images = imageFiles.map(src=>{
 if(!src) return null;
-let img = new Image();
-img.src = src;
+let img=new Image();
+img.src=src;
 return img;
 });
 
+let rotation = 0;
+let spinning=false;
+
 function drawWheel(){
+
+ctx.clearRect(0,0,500,500);
 
 let arc = 2*Math.PI/items.length;
 
 for(let i=0;i<items.length;i++){
 
-let angle = startAngle + i*arc;
+let angle = rotation + i*arc;
 
 ctx.beginPath();
-ctx.fillStyle = colors[i];
+ctx.fillStyle=colors[i];
 
 ctx.moveTo(250,250);
 ctx.arc(250,250,250,angle,angle+arc);
@@ -56,7 +58,7 @@ ctx.fill();
 ctx.save();
 
 ctx.translate(250,250);
-ctx.rotate(angle + arc/2);
+ctx.rotate(angle+arc/2);
 
 ctx.textAlign="center";
 ctx.fillStyle="black";
@@ -73,6 +75,7 @@ ctx.restore();
 }
 
 drawPointer();
+
 }
 
 function drawPointer(){
@@ -94,7 +97,7 @@ function spinWheel(){
 
 if(spinning) return;
 
-let email = document.getElementById("email").value;
+let email=document.getElementById("email").value;
 
 if(!email){
 alert("Enter email first");
@@ -103,52 +106,42 @@ return;
 
 spinning=true;
 
-let duration = 4000;
+let arc = 360/items.length;
+let winner = Math.floor(Math.random()*items.length);
+
+let stopAngle = 360 - (winner*arc + arc/2);
+let finalRotation = rotation + (360*5 + stopAngle)*(Math.PI/180);
+
 let start=null;
+let duration=4000;
 
-let finalAngle = 360*5 + Math.random()*360;
+function animate(ts){
 
-function animate(timestamp){
+if(!start) start=ts;
 
-if(!start) start=timestamp;
+let progress = ts-start;
+let percent = progress/duration;
 
-let progress = timestamp-start;
+if(percent>1) percent=1;
 
-let angle = easeOut(progress,0,finalAngle,duration);
-
-startAngle = angle*Math.PI/180;
-
-ctx.clearRect(0,0,500,500);
+rotation += (finalRotation-rotation)*0.1;
 
 drawWheel();
 
-if(progress < duration){
-
+if(progress<duration){
 requestAnimationFrame(animate);
-
-}else{
+}
+else{
 
 spinning=false;
 
-let degrees = (startAngle*180/Math.PI)%360;
-let arc = 360/items.length;
-
-let index = Math.floor((360-degrees+arc/2)/arc)%items.length;
-
 document.getElementById("result").innerText =
-"You won: "+items[index];
+"You won: "+items[winner];
 
 }
 
 }
 
 requestAnimationFrame(animate);
-
-}
-
-function easeOut(t,b,c,d){
-
-t/=d;
-return -c*t*(t-2)+b;
 
 }
