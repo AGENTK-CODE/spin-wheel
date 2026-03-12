@@ -14,9 +14,18 @@ const probabilities = [
 0.01,
 0.05,
 0.14,
-0.20,
-0.10,
+0.05,
+0.30,
 0.50
+];
+
+const images = [
+"ac.jpg",
+"washingmachine.jpg",
+"tablet.jpg",
+"laptop.jpg",
+"oven.jpg",
+null
 ];
 
 const colors = [
@@ -52,8 +61,20 @@ ctx.fillStyle="white";
 ctx.translate(250,250);
 ctx.rotate(angle + arc/2);
 
-ctx.font="16px Arial";
-ctx.fillText(items[i],100,10);
+ctx.font="14px Arial";
+
+if(images[i]){
+
+let img = new Image();
+img.src = images[i];
+
+img.onload = function(){
+ctx.drawImage(img,80,-50,70,70);
+};
+
+}
+
+ctx.fillText(items[i],80,40);
 
 ctx.restore();
 
@@ -110,6 +131,7 @@ spinning = true;
 let winnerIndex = pickPrize();
 
 let arc = 360/items.length;
+
 let finalAngle = (360*5) + (winnerIndex * arc);
 
 let duration = 4000;
@@ -120,6 +142,7 @@ function animate(timestamp){
 if(!start) start = timestamp;
 
 let progress = timestamp - start;
+
 let angle = easeOut(progress,0,finalAngle,duration);
 
 startAngle = angle * Math.PI / 180;
