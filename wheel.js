@@ -10,7 +10,7 @@ const items = [
 "NOTHING"
 ];
 
-const imageFiles = [
+const images = [
 "ac.jpg",
 "washingmachine.jpg",
 "tablet.jpg",
@@ -28,51 +28,56 @@ const colors = [
 "#95A5A6"
 ];
 
-const images = imageFiles.map(src=>{
+let angle = 0;
+let spinning = false;
+
+const loadedImages = images.map(src=>{
 if(!src) return null;
-let img=new Image();
-img.src=src;
+let img = new Image();
+img.src = src;
 return img;
 });
-
-let rotation = 0;
-let spinning = false;
 
 function drawWheel(){
 
 ctx.clearRect(0,0,500,500);
 
+ctx.save();
+ctx.translate(250,250);
+ctx.rotate(angle);
+
 let arc = 2*Math.PI/items.length;
 
 for(let i=0;i<items.length;i++){
 
-let angle = rotation + i*arc;
+let start = i*arc;
+let end = start + arc;
 
 ctx.beginPath();
-ctx.fillStyle=colors[i];
-
-ctx.moveTo(250,250);
-ctx.arc(250,250,250,angle,angle+arc);
+ctx.fillStyle = colors[i];
+ctx.moveTo(0,0);
+ctx.arc(0,0,250,start,end);
 ctx.fill();
 
 ctx.save();
 
-ctx.translate(250,250);
-ctx.rotate(angle + arc/2);
+ctx.rotate(start + arc/2);
 
 ctx.textAlign="center";
 ctx.fillStyle="black";
 ctx.font="bold 14px Arial";
 
-if(images[i]){
-ctx.drawImage(images[i],-35,-90,70,70);
+if(loadedImages[i]){
+ctx.drawImage(loadedImages[i],-35,-150,70,70);
 }
 
-ctx.fillText(items[i],0,10);
+ctx.fillText(items[i],0,-60);
 
 ctx.restore();
 
 }
+
+ctx.restore();
 
 drawPointer();
 
@@ -82,11 +87,9 @@ function drawPointer(){
 
 ctx.beginPath();
 ctx.fillStyle="black";
-
-ctx.moveTo(250,5);
-ctx.lineTo(280,50);
-ctx.lineTo(220,50);
-
+ctx.moveTo(250,10);
+ctx.lineTo(280,60);
+ctx.lineTo(220,60);
 ctx.fill();
 
 }
@@ -106,32 +109,32 @@ return;
 
 spinning=true;
 
-let arc = 360/items.length;
+let arcDeg = 360/items.length;
 let winner = Math.floor(Math.random()*items.length);
 
-let stopAngle = 360 - (winner*arc + arc/2);
-let finalRotation = rotation + (360*6 + stopAngle)*(Math.PI/180);
+let stopAngle = 360 - (winner*arcDeg + arcDeg/2);
 
-let start=null;
+let finalAngle = (360*6 + stopAngle)*Math.PI/180;
+
+let startAngle = angle;
+let startTime=null;
 let duration=4000;
 
-function animate(ts){
+function animate(time){
 
-if(!start) start=ts;
+if(!startTime) startTime=time;
 
-let progress = ts-start;
+let progress = time-startTime;
 let percent = Math.min(progress/duration,1);
 
 let ease = 1-Math.pow(1-percent,3);
 
-rotation = ease*finalRotation;
+angle = startAngle + ease*(finalAngle-startAngle);
 
 drawWheel();
 
 if(percent<1){
-
 requestAnimationFrame(animate);
-
 }
 else{
 
