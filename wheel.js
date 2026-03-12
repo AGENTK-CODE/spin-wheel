@@ -68,7 +68,7 @@ ctx.fillStyle="black";
 ctx.font="bold 14px Arial";
 
 if(loadedImages[i]){
-ctx.drawImage(loadedImages[i],-35,-150,70,70);
+ctx.drawImage(loadedImages[i],-35,-110,70,70);
 }
 
 ctx.fillText(items[i],0,-60);
@@ -150,3 +150,4 @@ document.getElementById("result").innerText =
 requestAnimationFrame(animate);
 
 }
+
