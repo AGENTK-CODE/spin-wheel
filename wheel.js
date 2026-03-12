@@ -10,15 +10,6 @@ const items = [
 "NOTHING"
 ];
 
-const probabilities = [
-0.01,
-0.05,
-0.14,
-0.20,
-0.10,
-0.50
-];
-
 const imageFiles = [
 "ac.jpg",
 "washingmachine.jpg",
@@ -67,14 +58,15 @@ ctx.save();
 ctx.translate(250,250);
 ctx.rotate(angle + arc/2);
 
+ctx.textAlign="center";
 ctx.fillStyle="black";
 ctx.font="bold 14px Arial";
 
 if(images[i]){
-ctx.drawImage(images[i],70,-50,70,70);
+ctx.drawImage(images[i],-35,-70,70,70);
 }
 
-ctx.fillText(items[i],70,40);
+ctx.fillText(items[i],0,20);
 
 ctx.restore();
 
@@ -93,25 +85,10 @@ ctx.lineTo(280,50);
 ctx.lineTo(220,50);
 
 ctx.fill();
+
 }
 
 drawWheel();
-
-function pickPrize(){
-
-let rand = Math.random();
-let sum = 0;
-
-for(let i=0;i<probabilities.length;i++){
-
-sum += probabilities[i];
-
-if(rand < sum){
-return i;
-}
-
-}
-}
 
 function spinWheel(){
 
@@ -124,18 +101,12 @@ alert("Enter email first");
 return;
 }
 
-spinning = true;
-
-let winnerIndex = pickPrize();
-
-let arc = 360/items.length;
-
-let stopAngle = 360 - (winnerIndex*arc) - arc/2;
-
-let finalAngle = 360*5 + stopAngle;
+spinning=true;
 
 let duration = 4000;
 let start=null;
+
+let finalAngle = 360*5 + Math.random()*360;
 
 function animate(timestamp){
 
@@ -151,15 +122,21 @@ ctx.clearRect(0,0,500,500);
 
 drawWheel();
 
-if(progress<duration){
+if(progress < duration){
+
 requestAnimationFrame(animate);
-}
-else{
+
+}else{
 
 spinning=false;
 
+let degrees = (startAngle*180/Math.PI)%360;
+let arc = 360/items.length;
+
+let index = Math.floor((360-degrees+arc/2)/arc)%items.length;
+
 document.getElementById("result").innerText =
-"You won: "+items[winnerIndex];
+"You won: "+items[index];
 
 }
 
