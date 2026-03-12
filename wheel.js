@@ -2,126 +2,148 @@ const canvas = document.getElementById("wheel");
 const ctx = canvas.getContext("2d");
 
 const items = [
-  "AC",
-  "WASHING MACHINE",
-  "TABLET",
-  "LAPTOP",
-  "OVEN",
-  "NOTHING"
+"AC",
+"WASHING MACHINE",
+"TABLET",
+"LAPTOP",
+"OVEN",
+"NOTHING"
 ];
 
 const imageFiles = [
-  "ac.jpg",
-  "washingmachine.jpg",
-  "tablet.jpg",
-  "laptop.jpg",
-  "oven.jpg",
-  null
+"ac.jpg",
+"washingmachine.jpg",
+"tablet.jpg",
+"laptop.jpg",
+"oven.jpg",
+null
 ];
 
 const colors = [
-  "#FF5733",
-  "#33B5FF",
-  "#9B59B6",
-  "#2ECC71",
-  "#F1C40F",
-  "#95A5A6"
+"#FF5733",
+"#33B5FF",
+"#9B59B6",
+"#2ECC71",
+"#F1C40F",
+"#95A5A6"
 ];
 
-const images = imageFiles.map(src => {
-  if (!src) return null;
-  const img = new Image();
-  img.src = src;
-  return img;
+const images = imageFiles.map(src=>{
+if(!src) return null;
+let img=new Image();
+img.src=src;
+return img;
 });
 
-let angle = 0;
+let rotation = 0;
 let spinning = false;
 
-function drawWheel() {
-  const arc = (2 * Math.PI) / items.length;
+function drawWheel(){
 
-  ctx.clearRect(0, 0, 500, 500);
+ctx.clearRect(0,0,500,500);
 
-  for (let i = 0; i < items.length; i++) {
-    const sliceAngle = angle + i * arc;
+let arc = 2*Math.PI/items.length;
 
-    ctx.beginPath();
-    ctx.fillStyle = colors[i];
-    ctx.moveTo(250, 250);
-    ctx.arc(250, 250, 250, sliceAngle, sliceAngle + arc);
-    ctx.fill();
+for(let i=0;i<items.length;i++){
 
-    ctx.save();
-    ctx.translate(250, 250);
-    ctx.rotate(sliceAngle + arc / 2);
+let angle = rotation + i*arc;
 
-    ctx.textAlign = "center";
-    ctx.fillStyle = "black";
-    ctx.font = "bold 14px Arial";
+ctx.beginPath();
+ctx.fillStyle=colors[i];
 
-    if (images[i]) {
-      ctx.drawImage(images[i], -35, -70, 70, 70);
-    }
+ctx.moveTo(250,250);
+ctx.arc(250,250,250,angle,angle+arc);
+ctx.fill();
 
-    ctx.fillText(items[i], 0, 20);
+ctx.save();
 
-    ctx.restore();
-  }
+ctx.translate(250,250);
+ctx.rotate(angle + arc/2);
 
-  drawPointer();
+ctx.textAlign="center";
+ctx.fillStyle="black";
+ctx.font="bold 14px Arial";
+
+if(images[i]){
+ctx.drawImage(images[i],-35,-90,70,70);
 }
 
-function drawPointer() {
-  ctx.beginPath();
-  ctx.fillStyle = "black";
-  ctx.moveTo(250, 5);
-  ctx.lineTo(280, 50);
-  ctx.lineTo(220, 50);
-  ctx.fill();
+ctx.fillText(items[i],0,10);
+
+ctx.restore();
+
+}
+
+drawPointer();
+
+}
+
+function drawPointer(){
+
+ctx.beginPath();
+ctx.fillStyle="black";
+
+ctx.moveTo(250,5);
+ctx.lineTo(280,50);
+ctx.lineTo(220,50);
+
+ctx.fill();
+
 }
 
 drawWheel();
 
-function spinWheel() {
-  if (spinning) return;
+function spinWheel(){
 
-  const email = document.getElementById("email").value;
-  if (!email) {
-    alert("Enter email first");
-    return;
-  }
+if(spinning) return;
 
-  spinning = true;
+let email=document.getElementById("email").value;
 
-  const arcDeg = 360 / items.length;
-  const winner = Math.floor(Math.random() * items.length);
+if(!email){
+alert("Enter email first");
+return;
+}
 
-  const stopAngle = 360 - (winner * arcDeg + arcDeg / 2);
-  const totalRotation = 360 * 6 + stopAngle;
+spinning=true;
 
-  let start = null;
-  const duration = 4000;
+let arc = 360/items.length;
+let winner = Math.floor(Math.random()*items.length);
 
-  function animate(timestamp) {
-    if (!start) start = timestamp;
+let stopAngle = 360 - (winner*arc + arc/2);
+let finalRotation = rotation + (360*6 + stopAngle)*(Math.PI/180);
 
-    const progress = timestamp - start;
-    const percent = Math.min(progress / duration, 1);
+let start=null;
+let duration=4000;
 
-    const eased = 1 - Math.pow(1 - percent, 3);
-    angle = (totalRotation * eased) * Math.PI / 180;
+function animate(ts){
 
-    drawWheel();
+if(!start) start=ts;
 
-    if (percent < 1) {
-      requestAnimationFrame(animate);
-    } else {
-      spinning = false;
-      document.getElementById("result").innerText =
-        "You won: " + items[winner];
-    }
-  }
+let progress = ts-start;
+let percent = Math.min(progress/duration,1);
 
-  requestAnimationFrame(animate);
+let ease = 1-Math.pow(1-percent,3);
+
+rotation = ease*finalRotation;
+
+drawWheel();
+
+if(percent<1){
+
+requestAnimationFrame(animate);
+
+}
+else{
+
+spinning=false;
+
+document.getElementById("result").innerText =
+"You won: "+items[winner];
+
+}
+
+}
+
+requestAnimationFrame(animate);
+
 }
