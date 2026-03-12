@@ -2,22 +2,34 @@ const canvas = document.getElementById("wheel");
 const ctx = canvas.getContext("2d");
 
 const items = [
-"Phone",
-"Headphones",
-"Gift Card",
-"Coupon",
-"Nothing"
+"AC",
+"WASHING MACHINE",
+"TABLET",
+"LAPTOP",
+"OVEN",
+"NOTHING"
 ];
 
 const probabilities = [
 0.01,
 0.05,
 0.14,
-0.30,
+0.20,
+0.10,
 0.50
 ];
 
+const colors = [
+"#FF5733",
+"#33B5FF",
+"#9B59B6",
+"#2ECC71",
+"#F1C40F",
+"#95A5A6"
+];
+
 let startAngle = 0;
+let spinning = false;
 
 function drawWheel(){
 
@@ -28,25 +40,38 @@ for(let i=0;i<items.length;i++){
 let angle = startAngle + i * arc;
 
 ctx.beginPath();
-ctx.fillStyle = i%2==0 ? "#f4b400" : "#4285f4";
+ctx.fillStyle = colors[i];
 
 ctx.moveTo(250,250);
-
 ctx.arc(250,250,250,angle,angle+arc);
-
 ctx.fill();
 
 ctx.save();
 
-ctx.fillStyle="black";
+ctx.fillStyle="white";
 ctx.translate(250,250);
 ctx.rotate(angle + arc/2);
 
+ctx.font="16px Arial";
 ctx.fillText(items[i],100,10);
 
 ctx.restore();
 
 }
+
+drawPointer();
+}
+
+function drawPointer(){
+
+ctx.beginPath();
+ctx.fillStyle="black";
+
+ctx.moveTo(250,10);
+ctx.lineTo(270,40);
+ctx.lineTo(230,40);
+
+ctx.fill();
 
 }
 
@@ -71,6 +96,8 @@ return i;
 
 function spinWheel(){
 
+if(spinning) return;
+
 let email = document.getElementById("email").value;
 
 if(!email){
@@ -78,9 +105,50 @@ alert("Enter email first");
 return;
 }
 
+spinning = true;
+
 let winnerIndex = pickPrize();
+
+let arc = 360/items.length;
+let finalAngle = (360*5) + (winnerIndex * arc);
+
+let duration = 4000;
+let start = null;
+
+function animate(timestamp){
+
+if(!start) start = timestamp;
+
+let progress = timestamp - start;
+let angle = easeOut(progress,0,finalAngle,duration);
+
+startAngle = angle * Math.PI / 180;
+
+ctx.clearRect(0,0,500,500);
+
+drawWheel();
+
+if(progress < duration){
+requestAnimationFrame(animate);
+}
+else{
+
+spinning=false;
 
 document.getElementById("result").innerText =
 "You won: " + items[winnerIndex];
+
+}
+
+}
+
+requestAnimationFrame(animate);
+
+}
+
+function easeOut(t,b,c,d){
+
+t/=d;
+return -c * t*(t-2) + b;
 
 }
