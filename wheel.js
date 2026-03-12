@@ -14,12 +14,12 @@ const probabilities = [
 0.01,
 0.05,
 0.14,
-0.05,
-0.30,
-0.50
+0.20,
+0.50,
+0.10
 ];
 
-const images = [
+const imageFiles = [
 "ac.jpg",
 "washingmachine.jpg",
 "tablet.jpg",
@@ -40,6 +40,21 @@ const colors = [
 let startAngle = 0;
 let spinning = false;
 
+const images = [];
+
+for(let i=0;i<imageFiles.length;i++){
+
+if(imageFiles[i]){
+let img = new Image();
+img.src = imageFiles[i];
+images.push(img);
+}
+else{
+images.push(null);
+}
+
+}
+
 function drawWheel(){
 
 let arc = 2 * Math.PI / items.length;
@@ -57,30 +72,26 @@ ctx.fill();
 
 ctx.save();
 
-ctx.fillStyle="white";
+ctx.fillStyle="black";
 ctx.translate(250,250);
 ctx.rotate(angle + arc/2);
 
-ctx.font="14px Arial";
+ctx.font="bold 14px Arial";
 
 if(images[i]){
 
-let img = new Image();
-img.src = images[i];
-
-img.onload = function(){
-ctx.drawImage(img,80,-50,70,70);
-};
+ctx.drawImage(images[i],70,-60,80,80);
 
 }
 
-ctx.fillText(items[i],80,40);
+ctx.fillText(items[i],70,40);
 
 ctx.restore();
 
 }
 
 drawPointer();
+
 }
 
 function drawPointer(){
