@@ -14,9 +14,9 @@ const probabilities = [
 0.01,
 0.05,
 0.14,
-0.20,
-0.50,
-0.10
+0.10,
+0.40,
+0.30
 ];
 
 const imageFiles = [
@@ -48,8 +48,7 @@ if(imageFiles[i]){
 let img = new Image();
 img.src = imageFiles[i];
 images.push(img);
-}
-else{
+}else{
 images.push(null);
 }
 
@@ -72,19 +71,17 @@ ctx.fill();
 
 ctx.save();
 
-ctx.fillStyle="black";
 ctx.translate(250,250);
 ctx.rotate(angle + arc/2);
 
+ctx.fillStyle="black";
 ctx.font="bold 14px Arial";
 
 if(images[i]){
-
-ctx.drawImage(images[i],70,-60,80,80);
-
+ctx.drawImage(images[i],60,-50,80,80);
 }
 
-ctx.fillText(items[i],70,40);
+ctx.fillText(items[i],60,40);
 
 ctx.restore();
 
@@ -99,9 +96,9 @@ function drawPointer(){
 ctx.beginPath();
 ctx.fillStyle="black";
 
-ctx.moveTo(250,10);
-ctx.lineTo(270,40);
-ctx.lineTo(230,40);
+ctx.moveTo(250,5);
+ctx.lineTo(280,50);
+ctx.lineTo(220,50);
 
 ctx.fill();
 
@@ -143,7 +140,7 @@ let winnerIndex = pickPrize();
 
 let arc = 360/items.length;
 
-let finalAngle = (360*5) + (winnerIndex * arc);
+let finalAngle = (360*5) + ((items.length - winnerIndex) * arc);
 
 let duration = 4000;
 let start = null;
@@ -164,8 +161,7 @@ drawWheel();
 
 if(progress < duration){
 requestAnimationFrame(animate);
-}
-else{
+}else{
 
 spinning=false;
 
