@@ -1,0 +1,16 @@
+body{
+text-align:center;
+font-family:Arial;
+background:#f4f4f4;
+}
+
+#wheel{
+border-radius:50%;
+border:5px solid black;
+}
+
+button{
+padding:10px 20px;
+font-size:18px;
+cursor:pointer;
+}
